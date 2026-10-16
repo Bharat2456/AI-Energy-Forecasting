@@ -1,0 +1,5 @@
+model,RMSE,MAE,MAPE_%,R2
+Seasonal Naive (lag 168h),18.5393,12.7812,4.3054,0.9088
+Linear Regression,15.1482,11.5369,3.8491,0.9391
+Random Forest,13.0367,9.8219,3.2337,0.9549
+Gradient Boosting,11.4538,8.7517,2.8825,0.9652

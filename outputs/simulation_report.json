@@ -1,0 +1,75 @@
+{
+  "period": "2024-10-03 00:00:00 -> 2024-12-31 23:00:00",
+  "assumptions": {
+    "day_ahead_price_per_MWh": 5000.0,
+    "shortfall_multiplier": 1.8,
+    "surplus_multiplier": 0.5
+  },
+  "model_used": "Gradient Boosting",
+  "cost_oracle": 3201818550.0,
+  "cost_model": 3272471998.0646057,
+  "cost_naive": 3291093512.5,
+  "excess_cost_model_vs_oracle": 70653448.06460571,
+  "excess_cost_naive_vs_oracle": 89274962.5,
+  "saving_model_vs_naive": 18621514.435394287,
+  "saving_pct_of_excess": 20.858607961212293,
+  "saving_pct_of_total": 0.5658154155956784,
+  "peak_planning": {
+    "peak_threshold_mwh_hist_p95": 433.9,
+    "daily": [
+      {
+        "date": "2025-01-01",
+        "peak_mwh": 358.3,
+        "peak_hour": "21:00",
+        "total_mwh": 6270.3,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-02",
+        "peak_mwh": 403.0,
+        "peak_hour": "20:00",
+        "total_mwh": 7203.9,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-03",
+        "peak_mwh": 402.5,
+        "peak_hour": "20:00",
+        "total_mwh": 7232.8,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-04",
+        "peak_mwh": 350.6,
+        "peak_hour": "20:00",
+        "total_mwh": 6280.1,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-05",
+        "peak_mwh": 352.1,
+        "peak_hour": "20:00",
+        "total_mwh": 6311.5,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-06",
+        "peak_mwh": 410.7,
+        "peak_hour": "20:00",
+        "total_mwh": 7399.7,
+        "high_alert": false
+      },
+      {
+        "date": "2025-01-07",
+        "peak_mwh": 408.6,
+        "peak_hour": "20:00",
+        "total_mwh": 7286.8,
+        "high_alert": false
+      }
+    ],
+    "hours_above_threshold": 0,
+    "demand_response_shift_mwh": 0.0,
+    "forecast_max_mwh": 410.7,
+    "forecast_max_time": "2025-01-06 20:00:00"
+  }
+}

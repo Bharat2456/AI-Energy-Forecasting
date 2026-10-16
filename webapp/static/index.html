@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚡ Energy Forecasting Studio</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#2563eb;--brand2:#7c3aed;--ok:#16a34a;--warn:#ea580c;--bad:#dc2626;--shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.05);--side:#0f172a}
+:root[data-theme=dark]{--bg:#0b1220;--card:#131c2e;--ink:#e5e9f2;--mute:#8b98b0;--line:#243049;--shadow:0 1px 3px rgba(0,0,0,.4);--side:#070d19}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b1220;--card:#131c2e;--ink:#e5e9f2;--mute:#8b98b0;--line:#243049;--shadow:0 1px 3px rgba(0,0,0,.4);--side:#070d19}}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:15px/1.5 -apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+aside{width:232px;background:var(--side);color:#cbd5e1;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0}
+.logo{font-weight:800;font-size:17px;color:#fff;display:flex;gap:10px;align-items:center;padding:4px 8px 20px}
+.logo i{font-style:normal;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:10px;width:34px;height:34px;display:grid;place-items:center}
+.logo small{display:block;font-weight:500;font-size:11px;color:#94a3b8}
+nav button{all:unset;box-sizing:border-box;width:100%;display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:10px;cursor:pointer;color:#cbd5e1;font-size:14px;margin-bottom:2px}
+nav button:hover{background:#1e293b}nav button.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+nav button:focus-visible{outline:2px solid #93c5fd}
+.side-foot{margin-top:auto;font-size:12px;color:#94a3b8;padding:8px}
+.pill{display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:3px 10px;border-radius:99px;background:#1e293b}
+.dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}.dot.ok{background:#22c55e}.dot.run{background:#f59e0b;animation:p 1s infinite}
+@keyframes p{50%{opacity:.3}}
+main{flex:1;min-width:0;padding:26px 32px 60px;max-width:1300px}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+h1{margin:0;font-size:24px}h2{margin:0 0 4px;font-size:17px}p.sub{margin:2px 0 0;color:var(--mute)}
+.grid{display:grid;gap:16px}.k4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+.kpi .l{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600}
+.kpi .v{font-size:28px;font-weight:800;margin:4px 0 0;letter-spacing:-.02em}.kpi .n{font-size:12.5px;color:var(--mute)}
+.kpi.hl{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:0}.kpi.hl .l,.kpi.hl .n{color:#e0e7ff}
+canvas{width:100%;display:block}
+.chart{position:relative}.tip{position:absolute;pointer-events:none;background:#0f172acc;color:#fff;font-size:12px;padding:6px 9px;border-radius:8px;white-space:nowrap;display:none;z-index:5;backdrop-filter:blur(4px)}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute)}tr.best td{background:rgba(37,99,235,.09);font-weight:600}
+.tw{overflow-x:auto}
+.badge{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;background:rgba(22,163,74,.14);color:var(--ok)}.badge.w{background:rgba(234,88,12,.14);color:var(--warn)}.badge.b{background:rgba(37,99,235,.14);color:var(--brand)}
+button.btn{all:unset;box-sizing:border-box;cursor:pointer;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center}
+button.btn:hover{filter:brightness(1.08)}button.btn:disabled{opacity:.5;cursor:not-allowed}button.btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+button.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px}.seg button{all:unset;cursor:pointer;padding:5px 12px;border-radius:7px;font-size:13px;color:var(--mute)}.seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+input[type=range]{width:200px;accent-color:var(--brand)}input[type=number],select{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;width:130px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mute);font-weight:600}
+.bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13.5px}.bar .nm{width:150px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar .tr{flex:1;background:var(--bg);border-radius:6px;height:16px;overflow:hidden}.bar .fi{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .6s}.bar .vl{width:70px;text-align:right;color:var(--mute);font-variant-numeric:tabular-nums}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}.gallery figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:zoom-in;box-shadow:var(--shadow)}.gallery img{width:100%;display:block;background:#fff}.gallery figcaption{padding:10px 14px;font-size:13px;color:var(--mute)}
+#lightbox{position:fixed;inset:0;background:#000d;display:none;place-items:center;z-index:50;cursor:zoom-out;padding:24px}#lightbox img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
+pre.log{background:#0b1220;color:#a7f3d0;border-radius:12px;padding:14px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;max-height:340px;overflow:auto;white-space:pre-wrap;margin:0}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--mute);cursor:pointer;transition:.2s}.drop:hover,.drop.over{border-color:var(--brand);background:rgba(37,99,235,.06)}
+.empty{text-align:center;padding:60px 20px}.empty .big{font-size:48px}
+.msg{padding:10px 14px;border-radius:10px;font-size:14px;margin-top:10px}.msg.ok{background:rgba(22,163,74,.12);color:var(--ok)}.msg.err{background:rgba(220,38,38,.12);color:var(--bad)}.msg.info{background:rgba(37,99,235,.1);color:var(--brand)}
+.prog{height:8px;background:var(--bg);border-radius:99px;overflow:hidden;margin:14px 0}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .5s}
+.note{font-size:12.5px;color:var(--mute)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);margin:8px 0 0}.legend b{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.skeleton{height:120px;border-radius:12px;background:linear-gradient(90deg,var(--line),var(--bg),var(--line));background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
+.page{display:none}.page.on{display:block;animation:in .25s}@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.menu-btn{display:none}
+@media(max-width:860px){aside{position:fixed;z-index:20;transform:translateX(-100%);transition:.25s}aside.open{transform:none}.menu-btn{display:inline-flex}main{padding:18px 16px 50px}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside id="side">
+  <div class="logo"><i>⚡</i><div>Energy Forecasting<small>Studio · local app</small></div></div>
+  <nav id="nav">
+    <button data-p="dash" class="on">📊 &nbsp;Dashboard</button>
+    <button data-p="fc">🔮 &nbsp;Forecast</button>
+    <button data-p="models">🤖 &nbsp;Models</button>
+    <button data-p="biz">💰 &nbsp;Business impact</button>
+    <button data-p="data">🧹 &nbsp;Data &amp; quality</button>
+    <button data-p="gal">🖼️ &nbsp;Graph gallery</button>
+    <button data-p="run">⚙️ &nbsp;Run / Retrain</button>
+  </nav>
+  <div class="side-foot"><span class="pill"><span class="dot" id="sdot"></span><span id="stxt">checking…</span></span>
+    <div style="margin-top:10px"><button class="btn ghost" id="theme" style="color:#cbd5e1;border-color:#334155;padding:6px 12px;font-size:12.5px">🌓 Toggle theme</button></div></div>
+</aside>
+
+<main>
+ <!-- DASHBOARD -->
+ <section class="page on" id="p-dash">
+  <header class="top"><div><h1>Dashboard</h1><p class="sub">Smart-city district · hourly electricity demand · day-ahead ML forecasting</p></div>
+   <button class="btn menu-btn ghost" onclick="document.getElementById('side').classList.toggle('open')">☰ Menu</button></header>
+  <div id="dash-body"><div class="skeleton"></div></div>
+ </section>
+
+ <!-- FORECAST -->
+ <section class="page" id="p-fc">
+  <header class="top"><div><h1>Forecast</h1><p class="sub">Recursive hour-by-hour prediction after the last data point. Drag the slider to test a heat-wave / cold-spell.</p></div>
+   <a id="dl" class="btn ghost" href="#">⬇ Download CSV</a></header>
+  <div class="card"><div class="row">
+    <div><div class="note" style="margin-bottom:4px;font-weight:600">HORIZON</div><div class="seg" id="hz"><button data-h="24">24 h</button><button data-h="72">3 days</button><button data-h="168" class="on">7 days</button><button data-h="336">14 days</button></div></div>
+    <label class="f">Temperature what-if: <span id="offv" style="color:var(--ink)">+0 °C</span><input type="range" id="off" min="-10" max="15" step="1" value="0"></label>
+    <div class="sp"></div><button class="btn ghost" id="offreset">Reset</button></div></div>
+  <div id="fc-body" style="margin-top:16px"><div class="skeleton"></div></div>
+ </section>
+
+ <!-- MODELS -->
+ <section class="page" id="p-models">
+  <header class="top"><div><h1>Models</h1><p class="sub">Three ML models vs. a naive baseline, scored on an untouched 90-day test set.</p></div></header>
+  <div id="models-body"><div class="skeleton"></div></div>
+ </section>
+
+ <!-- BUSINESS -->
+ <section class="page" id="p-biz">
+  <header class="top"><div><h1>Business impact</h1><p class="sub">What is a better forecast worth? Replays the test period with three planners.</p></div></header>
+  <div id="biz-body"><div class="skeleton"></div></div>
+ </section>
+
+ <!-- DATA -->
+ <section class="page" id="p-data">
+  <header class="top"><div><h1>Data &amp; quality</h1><p class="sub">What the cleaning step fixed, demand patterns, and a peek at the rows.</p></div></header>
+  <div id="data-body"><div class="skeleton"></div></div>
+ </section>
+
+ <!-- GALLERY -->
+ <section class="page" id="p-gal">
+  <header class="top"><div><h1>Graph gallery</h1><p class="sub">All graphs produced by the pipeline (click to enlarge).</p></div></header>
+  <div class="gallery" id="gal"></div>
+ </section>
+
+ <!-- RUN -->
+ <section class="page" id="p-run">
+  <header class="top"><div><h1>Run / Retrain</h1><p class="sub">Same pipeline as <code>python main.py</code> — no terminal needed.</p></div></header>
+  <div class="grid g2">
+   <div class="card"><h2>1 · Choose data</h2><p class="sub" style="margin-bottom:12px">Use the simulated smart-city data, or upload your own CSV.</p>
+     <div class="seg" id="src"><button data-s="sim" class="on">Simulated data</button><button data-s="up">My own CSV</button></div>
+     <div id="sim-opts" class="row" style="margin-top:14px">
+       <label class="f">Days of data<input type="number" id="days" value="1096" min="400" max="3650"></label>
+       <label class="f">Random seed<input type="number" id="seed" value="42"></label></div>
+     <div id="up-opts" style="display:none;margin-top:14px">
+       <div class="drop" id="drop">📄 Drop a CSV here or click to browse<br><span class="note">columns: timestamp, energy_mwh, temperature_c, humidity_pct · 320+ days hourly</span></div>
+       <input type="file" id="file" accept=".csv" hidden><div id="up-msg"></div></div>
+   </div>
+   <div class="card"><h2>2 · Choose speed</h2><p class="sub" style="margin-bottom:12px">Quick ≈ 30 s (lighter models). Full ≈ 1–2 min (best accuracy).</p>
+     <div class="seg" id="spd"><button data-q="1" class="on">⚡ Quick</button><button data-q="0">🎯 Full</button></div>
+     <p class="note" style="margin-top:16px">⚠️ Running re-creates the files in <code>data/</code>, <code>models/</code>, <code>outputs/</code> and <code>images/</code> (just like <code>main.py</code>).</p>
+     <div class="row" style="margin-top:8px"><button class="btn" id="go">▶ Start training</button></div></div>
+  </div>
+  <div class="card" id="job" style="margin-top:16px;display:none"><div class="row"><h2 id="jt">Running…</h2><div class="sp"></div><span class="note" id="jel"></span></div>
+    <div class="prog"><i id="jp"></i></div><pre class="log" id="log"></pre><div id="jmsg"></div></div>
+ </section>
+</main>
+<div id="lightbox"><img alt=""></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=(n,d=0)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d});
+const money=n=>{n=Number(n);const a=Math.abs(n);return a>=1e7?'₹'+fmt(n/1e7,2)+' Cr':a>=1e5?'₹'+fmt(n/1e5,2)+' L':'₹'+fmt(n)};
+const api=async(u,o)=>{const r=await fetch(u,o);const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||r.statusText);return j};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let S=null, STATUS={}, loaded={};
+
+/* ---------- tiny chart lib (canvas, no internet needed) ---------- */
+function lineChart(host,o){
+  host.innerHTML='';host.classList.add('chart');
+  const c=document.createElement('canvas'),tip=document.createElement('div');tip.className='tip';host.append(c,tip);
+  const H=o.height||300;let hover=null;
+  function draw(){
+    const W=host.clientWidth,dpr=window.devicePixelRatio||1;c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';
+    const g=c.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,W,H);
+    const L=52,R=14,T=12,B=28,pw=W-L-R,ph=H-T-B;
+    let xs=o.series.flatMap(s=>s.x),ys=o.series.flatMap(s=>s.y);if(o.hline)ys.push(o.hline.y);
+    let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const pad=(y1-y0)*.08||1;y0-=pad;y1+=pad;
+    const X=v=>L+(v-x0)/(x1-x0||1)*pw,Y=v=>T+ph-(v-y0)/(y1-y0||1)*ph;
+    g.font='11.5px system-ui';g.fillStyle=css('--mute');g.strokeStyle=css('--line');g.lineWidth=1;
+    for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4,y=Y(v);g.beginPath();g.moveTo(L,y);g.lineTo(W-R,y);g.stroke();g.textAlign='right';g.fillText(fmt(v,v<20?1:0),L-8,y+4)}
+    const span=(x1-x0)/864e5,n=Math.max(2,Math.floor(pw/110));g.textAlign='center';
+    for(let i=0;i<=n;i++){const v=x0+(x1-x0)*i/n,d=new Date(v);g.fillText(span<=4?d.toLocaleString([], {weekday:'short',hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([], {month:'short',day:'numeric',...(span>300?{year:'2-digit'}:{})}),X(v),H-8)}
+    if(o.vline){const x=X(o.vline.x);g.setLineDash([4,4]);g.strokeStyle=css('--mute');g.beginPath();g.moveTo(x,T);g.lineTo(x,T+ph);g.stroke();g.setLineDash([]);g.fillStyle=css('--mute');g.textAlign='left';g.fillText(o.vline.label,x+5,T+12)}
+    if(o.hline){const y=Y(o.hline.y);g.setLineDash([6,4]);g.strokeStyle=css('--bad');g.beginPath();g.moveTo(L,y);g.lineTo(W-R,y);g.stroke();g.setLineDash([]);g.fillStyle=css('--bad');g.textAlign='right';g.fillText(o.hline.label,W-R-4,y-5)}
+    o.series.forEach(s=>{g.beginPath();g.lineWidth=s.w||1.8;g.strokeStyle=s.color;g.setLineDash(s.dash||[]);s.x.forEach((v,i)=>{const px=X(v),py=Y(s.y[i]);i?g.lineTo(px,py):g.moveTo(px,py)});g.stroke();g.setLineDash([])});
+    if(hover!=null){const hx=hover;g.strokeStyle=css('--mute');g.lineWidth=1;g.beginPath();g.moveTo(hx,T);g.lineTo(hx,T+ph);g.stroke();
+      const xv=x0+(hx-L)/pw*(x1-x0);let html=`<b>${new Date(xv).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</b>`;
+      o.series.forEach(s=>{if(xv<s.x[0]-36e5*2||xv>s.x[s.x.length-1]+36e5*2)return;let lo=0,hi=s.x.length-1;while(hi-lo>1){const m=(lo+hi)>>1;s.x[m]<xv?lo=m:hi=m}const i=Math.abs(s.x[lo]-xv)<Math.abs(s.x[hi]-xv)?lo:hi;
+        g.fillStyle=s.color;g.beginPath();g.arc(X(s.x[i]),Y(s.y[i]),4,0,7);g.fill();html+=`<br><span style="color:${s.color}">●</span> ${s.name}: ${fmt(s.y[i],1)} ${o.unit||''}`});
+      tip.innerHTML=html;tip.style.display='block';tip.style.left=Math.min(hx+14,W-170)+'px';tip.style.top='10px'}else tip.style.display='none';
+    c._m={L,R};
+  }
+  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const x=e.clientX-r.left;hover=(x>52&&x<r.width-14)?x:null;draw()});
+  c.addEventListener('mouseleave',()=>{hover=null;draw()});
+  host._redraw=draw;draw();
+  const lg=document.createElement('div');lg.className='legend';lg.innerHTML=o.series.map(s=>`<span><b style="background:${s.color}"></b>${s.name}</span>`).join('');host.append(lg);
+}
+function bars(host,items,{unit='',max}={}){const m=max||Math.max(...items.map(i=>i[1]));host.innerHTML=items.map(([n,v])=>`<div class="bar"><span class="nm" title="${n}">${n}</span><span class="tr"><span class="fi" style="display:block;width:${Math.max(2,v/m*100)}%"></span></span><span class="vl">${fmt(v,v<10?2:1)}${unit}</span></div>`).join('')}
+function colBars(host,labels,vals,fmtLabel){const m=Math.max(...vals),mn=Math.min(...vals)*.85;host.innerHTML=`<div style="display:flex;align-items:flex-end;gap:4px;height:150px">${vals.map((v,i)=>`<div title="${labels[i]}: ${fmt(v,1)} MWh" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%"><div style="width:100%;height:${(v-mn)/(m-mn)*100}%;min-height:4px;background:linear-gradient(180deg,var(--brand2),var(--brand));border-radius:5px 5px 0 0"></div></div>`).join('')}</div><div style="display:flex;gap:4px;margin-top:5px">${labels.map((l,i)=>`<span style="flex:1;text-align:center;font-size:${labels.length>12?10:11.5}px;color:var(--mute)">${(labels.length>12&&i%2)?'':l}</span>`).join('')}</div>`}
+window.addEventListener('resize',()=>$$('.chart').forEach(h=>h._redraw&&h._redraw()));
+
+/* ---------- navigation ---------- */
+function go(p){
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));$$('.page').forEach(s=>s.classList.toggle('on',s.id==='p-'+p));
+  $('#side').classList.remove('open');history.replaceState(null,'','#'+p);
+  if(!S&&p!=='run'&&p!=='gal'){return needModel(p)}
+  (loaders[p]&&loaders[p]())
+}
+$('#nav').onclick=e=>{const b=e.target.closest('button');b&&go(b.dataset.p)};
+function needModel(p){const h=$('#'+(p==='dash'?'dash-body':p+'-body'));if(h)h.innerHTML=`<div class="card empty"><div class="big">🚀</div><h2>No trained model yet</h2><p class="sub">Run the pipeline once and every page fills up with results.</p><br><button class="btn" onclick="go('run')">⚙️ Go to Run / Retrain</button></div>`}
+$('#theme').onclick=()=>{const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark';localStorage.theme=d.dataset.theme;loaded={};$$('.chart').forEach(h=>h._redraw&&h._redraw())};
+if(localStorage.theme)document.documentElement.dataset.theme=localStorage.theme;
+
+const kpi=(l,v,n,hl)=>`<div class="card kpi ${hl?'hl':''}"><div class="l">${l}</div><div class="v">${v}</div><div class="n">${n||''}</div></div>`;
+const loaders={};
+
+/* ---------- Dashboard ---------- */
+loaders.dash=async()=>{
+  if(loaded.dash)return;const m=S.metrics[S.best],b=S.metrics[S.baseline],sim=S.simulation;
+  $('#dash-body').innerHTML=`<div class="grid k4">
+   ${kpi('Best model',S.best,'chosen on validation RMSE',1)}
+   ${kpi('Forecast accuracy',fmt(100-m['MAPE_%'],2)+'%','MAPE '+fmt(m['MAPE_%'],2)+'% · R² '+fmt(m.R2,4))}
+   ${kpi('Typical error',fmt(m.RMSE,1)+' MWh','RMSE · baseline '+fmt(b.RMSE,1)+' MWh')}
+   ${kpi('Money saved',money(sim.saving_model_vs_naive||0),fmt(sim.saving_pct_of_excess||0,1)+'% of forecast-error cost removed')}
+  </div>
+  <div class="card" style="margin-top:16px"><div class="row"><div><h2>Demand history + next 7 days</h2><p class="sub">Last 14 days of actual demand (dark) followed by the AI forecast (orange)</p></div></div><div id="dh" style="margin-top:8px"></div></div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h2>Average demand by hour</h2><p class="sub">The double peak: morning &amp; evening</p><div id="dp1" style="margin-top:14px"></div></div>
+   <div class="card"><h2>Average demand by month</h2><p class="sub">Summer air-conditioning load</p><div id="dp2" style="margin-top:14px"></div></div></div>`;
+  const [h,f,p]=await Promise.all([api('/api/history?days=14'),api('/api/forecast?horizon=168'),api('/api/patterns')]);
+  const T=a=>a.map(x=>+new Date(x.replace(' ','T')));
+  const lastT=T(h.t).slice(-1)[0];
+  lineChart($('#dh'),{unit:'MWh',height:300,vline:{x:lastT,label:'forecast starts →'},series:[{name:'Actual',color:css('--ink'),x:T(h.t),y:h.energy},{name:'Forecast',color:'#ea580c',x:[lastT,...T(f.t)],y:[h.energy.slice(-1)[0],...f.forecast]}]});
+  colBars($('#dp1'),[...Array(24).keys()].map(i=>i%3?'':i+'h'),p.hourly);
+  colBars($('#dp2'),['J','F','M','A','M','J','J','A','S','O','N','D'],p.month);
+  loaded.dash=1;
+};
+
+/* ---------- Forecast ---------- */
+let HZ=168,OFF=0,fcTimer;
+async function drawForecast(){
+  const body=$('#fc-body');$('#dl').href=`/api/forecast.csv?horizon=${HZ}&temp_offset=${OFF}`;
+  try{const f=await api(`/api/forecast?horizon=${HZ}&temp_offset=${OFF}`),T=a=>a.map(x=>+new Date(x.replace(' ','T'))),pk=f.peak;
+   const alerts=pk.daily.filter(d=>d.high_alert).length;
+   body.innerHTML=`<div class="grid k4">${kpi('Peak demand',fmt(pk.forecast_max_mwh,1)+' MWh',new Date(pk.forecast_max_time.replace(' ','T')).toLocaleString([], {weekday:'short',hour:'2-digit',minute:'2-digit'}),1)}
+     ${kpi('Average demand',fmt(f.avg_mwh,1)+' MWh/h','over '+f.horizon+' hours')}${kpi('Total energy',fmt(f.total_mwh,0)+' MWh','≈ '+money(f.est_cost)+' day-ahead')}
+     ${kpi('High-alert days',alerts,'peak ≥ '+fmt(pk.peak_threshold_mwh_hist_p95,0)+' MWh (hist. top 5%)')}</div>
+     <div class="card" style="margin-top:16px"><h2>Hourly forecast ${OFF?`<span class="badge w">${OFF>0?'+':''}${OFF} °C what-if</span>`:''}</h2><p class="sub">Model: ${f.model} · hover to inspect · dashed line = capacity alert level</p><div id="fch" style="margin-top:8px"></div></div>
+     <div class="card" style="margin-top:16px"><h2>Daily summary</h2><div class="tw"><table><thead><tr><th>Date</th><th>Peak (MWh)</th><th>Peak hour</th><th>Total (MWh)</th><th>Status</th></tr></thead><tbody>${pk.daily.map(d=>`<tr><td>${d.date}</td><td>${fmt(d.peak_mwh,1)}</td><td>${d.peak_hour}</td><td>${fmt(d.total_mwh,0)}</td><td>${d.high_alert?'<span class="badge w">⚠ high alert</span>':'<span class="badge">normal</span>'}</td></tr>`).join('')}</tbody></table></div>
+     ${pk.demand_response_shift_mwh>0?`<p class="note" style="margin-top:10px">Demand-response idea: shifting 5% of peak load frees ≈ ${fmt(pk.demand_response_shift_mwh,0)} MWh from peak hours.</p>`:''}</div>`;
+   lineChart($('#fch'),{unit:'MWh',height:320,hline:{y:pk.peak_threshold_mwh_hist_p95,label:'alert level'},series:[{name:'Last 3 days (actual)',color:css('--mute'),x:T(f.last_actual_t),y:f.last_actual},{name:'Forecast',color:'#ea580c',x:T(f.t),y:f.forecast}]});
+  }catch(e){body.innerHTML=`<div class="msg err">${e.message}</div>`}
+}
+loaders.fc=()=>drawForecast();
+$('#hz').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#hz button').forEach(x=>x.classList.toggle('on',x===b));HZ=+b.dataset.h;drawForecast()};
+$('#off').oninput=e=>{OFF=+e.target.value;$('#offv').textContent=(OFF>=0?'+':'')+OFF+' °C';clearTimeout(fcTimer);fcTimer=setTimeout(drawForecast,350)};
+$('#offreset').onclick=()=>{$('#off').value=0;$('#off').oninput({target:$('#off')})};
+
+/* ---------- Models ---------- */
+loaders.models=async()=>{
+  if(loaded.models)return;const names=Object.keys(S.metrics),mt=S.metrics;
+  $('#models-body').innerHTML=`<div class="card"><h2>Test-set scores</h2><p class="sub">Lower RMSE/MAE/MAPE is better · higher R² is better · best model highlighted</p><div class="tw" style="margin-top:8px"><table><thead><tr><th>Model</th><th>RMSE (MWh)</th><th>MAE</th><th>MAPE %</th><th>R²</th></tr></thead><tbody>${names.map(n=>`<tr class="${n===S.best?'best':''}"><td>${n}${n===S.best?' <span class="badge b">selected</span>':n===S.baseline?' <span class="badge w">baseline</span>':''}</td><td>${fmt(mt[n].RMSE,2)}</td><td>${fmt(mt[n].MAE,2)}</td><td>${fmt(mt[n]['MAPE_%'],2)}</td><td>${fmt(mt[n].R2,4)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h2>RMSE comparison</h2><p class="sub">Typical error in MWh (shorter bar = better)</p><div id="mb" style="margin-top:12px"></div></div>
+   <div class="card"><h2>What drives the forecast?</h2><p class="sub">Feature importance of the selected model</p><div id="fi" style="margin-top:12px"><div class="skeleton" style="height:200px"></div></div></div></div>
+  <div class="card" style="margin-top:16px"><h2>7-day recursive backtest</h2><p class="sub">Pretend we were at four past dates and forecast a whole week using only earlier data.</p><div class="tw" style="margin-top:8px"><table><thead><tr><th>Window start</th><th>RMSE</th><th>MAE</th><th>MAPE %</th><th>R²</th></tr></thead><tbody>${(S.backtest||[]).map(b=>`<tr><td>${b.start.slice(0,10)}</td><td>${fmt(b.RMSE,2)}</td><td>${fmt(b.MAE,2)}</td><td>${fmt(b['MAPE_%'],2)}</td><td>${fmt(b.R2,4)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="card" style="margin-top:16px"><h2>How the data was split</h2><p class="sub">Chronological — time series must never be shuffled.</p><p style="margin:10px 0 0">Train up to <b>${S.split.train_end.slice(0,10)}</b> → validation up to <b>${S.split.val_end.slice(0,10)}</b> (model selection) → test <b>${S.split.test_start.slice(0,10)}</b> to <b>${S.split.test_end.slice(0,10)}</b> (final score).</p></div>`;
+  bars($('#mb'),names.map(n=>[n,mt[n].RMSE]),{unit:''});
+  api('/api/importance').then(i=>bars($('#fi'),Object.entries(i).map(([k,v])=>[k.replace(/_/g,' '),v*100]),{unit:'%'})).catch(e=>$('#fi').innerHTML=`<div class="msg err">${e.message}</div>`);
+  loaded.models=1;
+};
+
+/* ---------- Business ---------- */
+loaders.biz=()=>{
+  if(loaded.biz)return;const s=S.simulation,a=s.assumptions||{};
+  const pl=[['Oracle (perfect forecast)',s.cost_oracle],['ML model ('+s.model_used+')',s.cost_model],['Naive (same hour last week)',s.cost_naive]];
+  $('#biz-body').innerHTML=`<div class="grid k4">${kpi('Saved vs naive planner',money(s.saving_model_vs_naive),'over the 90-day test period',1)}${kpi('Error cost removed',fmt(s.saving_pct_of_excess,1)+'%','of the extra cost caused by forecast errors')}${kpi('Share of total spend',fmt(s.saving_pct_of_total,2)+'%','small % × huge volume = real money')}</div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h2>Extra cost caused by forecast errors</h2><p class="sub">Compared with a perfect forecast (lower is better)</p><div id="bz" style="margin-top:14px"></div></div>
+   <div class="card"><h2>Assumptions used</h2><p class="sub">Editable in <code>src/config.py</code></p><table style="margin-top:8px"><tbody><tr><td>Day-ahead price</td><td>${money(a.day_ahead_price_per_MWh)} / MWh</td></tr><tr><td>Under-forecast penalty</td><td>missing energy costs ${a.shortfall_multiplier}× on spot market</td></tr><tr><td>Over-forecast loss</td><td>surplus resold at only ${a.surplus_multiplier}×</td></tr><tr><td>Period</td><td>${(s.period||'').replace(/ 00:00:00| 23:00:00/g,'')}</td></tr></tbody></table></div></div>
+  <div class="card" style="margin-top:16px"><h2>Total procurement cost per planner</h2><div class="tw"><table><thead><tr><th>Planner</th><th>Total cost</th><th>Extra vs oracle</th></tr></thead><tbody>${pl.map(([n,v])=>`<tr><td>${n}</td><td>${money(v)}</td><td>${money(v-s.cost_oracle)}</td></tr>`).join('')}</tbody></table></div></div>`;
+  bars($('#bz'),[['ML model',s.excess_cost_model_vs_oracle/1e5],['Naive planner',s.excess_cost_naive_vs_oracle/1e5]],{unit:' L'});loaded.biz=1;
+};
+
+/* ---------- Data ---------- */
+loaders.data=async()=>{
+  if(loaded.data)return;const p=S.preprocessing||{},d=S.data||{};
+  const mv=p.missing_values_before||{},cell=r=>'<tr>'+r.map(x=>`<td>${typeof x==='number'?fmt(x,2):(x??'—')}</td>`).join('')+'</tr>';
+  $('#data-body').innerHTML=`<div class="grid k4">${kpi('Rows (clean)',fmt(p.rows_out||d.rows),fmt(p.rows_in)+' raw rows in')}${kpi('Duplicates removed',fmt(p.duplicates_removed))}${kpi('Missing hours added',fmt(p.missing_timestamps_added),'gaps in the timeline')}${kpi('Spikes flagged',fmt(p.outliers_flagged),'sensor outliers fixed')}</div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h2>Missing readings (before → after)</h2><table style="margin-top:8px"><thead><tr><th>Column</th><th>Before</th><th>After</th></tr></thead><tbody>${Object.keys(mv).map(k=>`<tr><td>${k}</td><td>${fmt(mv[k])}</td><td><span class="badge">${fmt(p.missing_values_after[k])}</span></td></tr>`).join('')}</tbody></table><p class="note" style="margin-top:10px">Period: ${(p.start||'').slice(0,10)} → ${(p.end||'').slice(0,10)}</p></div>
+   <div class="card"><h2>Demand by day of week</h2><p class="sub">Weekends are lower</p><div id="dw" style="margin-top:14px"></div></div></div>
+  <div class="card" style="margin-top:16px"><h2>Raw vs. cleaned (first rows)</h2><div class="grid g2" style="margin-top:8px"><div class="tw" id="rw"></div><div class="tw" id="cl"></div></div></div>`;
+  const [pt,sm]=await Promise.all([api('/api/patterns'),api('/api/sample')]);
+  colBars($('#dw'),['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],pt.dow);
+  const tbl=(t,x)=>x?`<b style="font-size:13px">${t}</b><table><thead><tr>${x.columns.map(c=>`<th>${c.replace('_',' ')}</th>`).join('')}</tr></thead><tbody>${x.data.map(cell).join('')}</tbody></table>`:'';
+  $('#rw').innerHTML=tbl('Raw (dirty)',sm.raw);$('#cl').innerHTML=tbl('Clean',sm.clean);loaded.data=1;
+};
+
+/* ---------- Gallery ---------- */
+const CAP={'01':'Consumption overview','02':'Demand patterns','03':'Cleaning: before / after','04':'Model comparison','05':'Actual vs predicted','06':'Residual analysis','07':'Feature importance','08':'Future 7-day forecast','09':'Cost simulation'};
+loaders.gal=()=>{const imgs=STATUS.images||[];$('#gal').innerHTML=imgs.length?imgs.map(n=>`<figure><img loading="lazy" src="/images/${n}?v=${STATUS.v||0}" alt="${n}"><figcaption>${CAP[n.slice(0,2)]||n}</figcaption></figure>`).join(''):`<div class="card empty" style="grid-column:1/-1"><div class="big">🖼️</div><p class="sub">No graphs yet — run the pipeline first.</p></div>`};
+$('#gal').onclick=e=>{const i=e.target.closest('img');if(i){$('#lightbox img').src=i.src;$('#lightbox').style.display='grid'}};
+$('#lightbox').onclick=()=>$('#lightbox').style.display='none';
+document.addEventListener('keydown',e=>e.key==='Escape'&&($('#lightbox').style.display='none'));
+
+/* ---------- Run / Retrain ---------- */
+let useUp=false,quick=true,poll;
+const seg=(id,fn)=>$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;$$(id+' button').forEach(x=>x.classList.toggle('on',x===b));fn(b)};
+seg('#src',b=>{useUp=b.dataset.s==='up';$('#sim-opts').style.display=useUp?'none':'flex';$('#up-opts').style.display=useUp?'block':'none'});
+seg('#spd',b=>quick=b.dataset.q==='1');
+$('#drop').onclick=()=>$('#file').click();
+['dragover','dragenter'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.add('over')}));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.remove('over')}));
+$('#drop').addEventListener('drop',e=>upload(e.dataTransfer.files[0]));$('#file').onchange=e=>upload(e.target.files[0]);
+async function upload(f){if(!f)return;const fd=new FormData();fd.append('file',f);$('#up-msg').innerHTML='<div class="msg info">Checking file…</div>';
+  try{const r=await api('/api/upload',{method:'POST',body:fd});$('#up-msg').innerHTML=`<div class="msg ok">✔ ${f.name}: ${fmt(r.rows)} rows · ${r.start.slice(0,10)} → ${r.end.slice(0,10)} (${r.days} days)${r.days<320?'<br>⚠ Fewer than ~320 days — training will likely fail.':''}</div>`}
+  catch(e){$('#up-msg').innerHTML=`<div class="msg err">${e.message}</div>`}}
+$('#go').onclick=async()=>{
+  if(useUp&&!STATUS.has_upload&&!$('#up-msg .ok')){$('#up-msg').innerHTML='<div class="msg err">Upload a CSV first.</div>';return}
+  try{await api('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({quick,use_upload:useUp,days:+$('#days').value,seed:+$('#seed').value})});startPoll()}catch(e){alert(e.message)}};
+function startPoll(){$('#job').style.display='block';$('#go').disabled=true;$('#jt').textContent='Training in progress…';$('#jmsg').innerHTML='';$('#log').textContent='Starting…';$('#jp').style.width='4%';clearInterval(poll);poll=setInterval(tick,1200);tick()}
+async function tick(){
+  try{const r=await api('/api/run/status'),L=r.log,pre=$('#log'),stick=pre.scrollTop+pre.clientHeight>=pre.scrollHeight-30;pre.textContent=L.join('\n');if(stick)pre.scrollTop=pre.scrollHeight;
+   const step=[...L.join('\n').matchAll(/\[(\d)\/7\]/g)].pop();$('#jp').style.width=(r.job.running?(step?(+step[1]/7*92):4):100)+'%';$('#jel').textContent=r.elapsed?r.elapsed+' s':'';
+   if(!r.job.running){clearInterval(poll);$('#go').disabled=false;
+     if(r.job.error){$('#jt').textContent='Failed';$('#jmsg').innerHTML=`<div class="msg err">${r.job.error}</div>`}
+     else{$('#jt').textContent='✔ Finished';$('#jmsg').innerHTML=`<div class="msg ok">All done. <a href="#dash" onclick="go('dash')">Open the dashboard →</a></div>`;loaded={};await refresh()}}
+  }catch(e){}}
+
+/* ---------- boot ---------- */
+async function refresh(){
+  STATUS=await api('/api/status');STATUS.v=Date.now();$('#sdot').className='dot '+(STATUS.job.running?'run':STATUS.ready?'ok':'');
+  $('#stxt').textContent=STATUS.job.running?'training…':STATUS.ready?'model ready':'no model yet';
+  S=STATUS.ready?await api('/api/summary').catch(()=>null):null;if(S&&!S.ready)S=null;
+  const cur=(location.hash||'#dash').slice(1);go($$('#nav button').some(b=>b.dataset.p===cur)?cur:'dash');
+}
+refresh().then(()=>{if(STATUS.job.running){go('run');startPoll()}});
+</script>
+</body>
+</html>

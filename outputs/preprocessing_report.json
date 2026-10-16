@@ -1,0 +1,19 @@
+{
+  "rows_in": 26284,
+  "duplicates_removed": 5,
+  "missing_timestamps_added": 25,
+  "outliers_flagged": 79,
+  "missing_values_before": {
+    "energy_mwh": 259,
+    "temperature_c": 103,
+    "humidity_pct": 25
+  },
+  "missing_values_after": {
+    "energy_mwh": 0,
+    "temperature_c": 0,
+    "humidity_pct": 0
+  },
+  "rows_out": 26304,
+  "start": "2022-01-01 00:00:00",
+  "end": "2024-12-31 23:00:00"
+}
